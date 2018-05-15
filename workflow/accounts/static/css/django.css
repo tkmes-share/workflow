@@ -62,9 +62,9 @@ a {
     background: #79aec8;
     border-radius: 4px;
     height: 33px;
-    width: 50%;
+    width: 80%;
     text-align: left;
-    top: 100px;
+    top: 60px;
     z-index:2; 
 }
 
@@ -107,8 +107,8 @@ a {
     border: 1px solid #a4a4a4;
     box-shadow: 4px 4px 6px -2px #a4a4a4;
     height: 400px;
-    width: 50%;
-    top: 98px;
+    width: 80%;
+    top: 58px;
     z-index:1;
 }
 
@@ -210,23 +210,23 @@ a {
 /* dropzone */
 #drop_area {
 	position:relative;
-    margin: 30px 0 0 100px;
+    margin:auto;
     text-align: center;
 	font-size: 11pt;
 	color: #000;
-	height: 150px;
-	width: 300px;
+	height: 300px;
+	width: 60%;
+	top: 30px;
 	border: 2px dotted #000;
-	background: #d9d9d9;
-	float: left;
+	background-image: url("../image/DEEPS_logo_input.png");
 	cursor: pointer;
-	opacity: 0.3;
+	opacity: 0.8;
 }
 
 #preview_area {
-    margin: 20px 0 0 40px;
+    margin: -250px 100px 0 10px;
 	font-size: 10pt;
-	float:left;    
+	float:right;    
 }
 
 #image_area {
@@ -242,7 +242,7 @@ a {
 #BackDiv {
     position: relative;
     margin: auto ;
-    top: 100px;
+    top: 60px;
     width: 98%;
 }
 

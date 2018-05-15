@@ -34,6 +34,11 @@ def helpQA(req):
     global login_date
     return render(req, 'helpQA.html', login_date)
 
+def rgbToInt(rgb):
+    colorInt = rgb[0] + (rgb[1] * 256) + (rgb[2] * 256 * 256)
+    return colorInt
+ 
+
 @csrf_exempt
 def csv_upload(req):
     input_path = os.path.join(input_dir, "input.csv")
@@ -69,7 +74,21 @@ def csv_upload(req):
         sheet.Cells(1,1).Value="購買部"
         sheet.Cells(16,1).Value="仕入れ先"
         sheet.Cells(31,1).Value="経理部"
-
+        
+        #Ⓕの書き方
+        shape1 = sheet.Shapes.AddShape(73,sheet.cells(1,2).Left, sheet.cells(8,1).Top, 25, 25)
+        shape1.Fill.ForeColor.RGB = rgbToInt((255,255,255))
+        shape1.Line.ForeColor.RGB = rgbToInt((0,0,0))
+        #shape1.TextFrame.autofit_text("F")
+        shape1.TextFrame2.TextRange.Characters.Text = "F"
+        shape1.TextFrame2.TextRange.Characters.Font.Fill.ForeColor.RGB = rgbToInt((0,0,0))
+        
+        sheet.Shapes.AddConnector(1, 150, 150, 200, 200)
+        sheet.Shapes.AddShape(18,sheet.cells(1,3).Left, sheet.cells(23,1).Top, 15, 15)
+        
+        
+        
+    
 
         
         workbook.SaveAs(output_save_path) #saveas名前をつけて保存
