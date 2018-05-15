@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">  
+  <title>scoring</title>
+  <link rel="stylesheet" type="text/css" href="../static/css/main.css">
+  <link rel="stylesheet" type="text/css" href="../static/css/scoring.css">
+  <link rel="stylesheet" type="text/css" href="../static/css/basic.min.css">
+  <link rel="stylesheet" type="text/css" href="../static/css/dropzone.min.css">
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/cupertino/jquery-ui.css">
+
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="../static/js/footerFixed.js"></script>
+  <script type="text/javascript" src="../static/js/dropzone.min.js"></script>
+  <script type="text/javascript" src="../static/js/dropzone-amd-module.min.js"></script>
+
+  <!--Dropzone.js-->
+  <script type="text/javascript">
+  Dropzone.autoDiscover = false;
+    $(function(){
+      $('#drop_area').dropzone({
+		    url:'/csv_upload',
+		    paramName : "file",	          //受信側の$_FILESのキー
+        parallelUploads:1,            // 1度に何ファイルずつアップロードするか
+		    addRemoveLinks:true,
+		    acceptedFiles:'.csv',   // アップロード許可ファイルを定義
+        maxFiles:1,                 // 1度にアップロード出来るファイルの数
+        maxFilesize:2,                // 1つのファイルの最大サイズ(1=1M)
+        previewsContainer:'#preview_area',
+        previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n <div class=\"dz-details\">\n <div class=\"dz-filename\"><span data-dz-name></span></div>\n <div class=\"dz-size\" data-dz-size></div>\n <img data-dz-thumbnail />\n </div>\n <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n <div class=\"dz-success-mark\"><span>&#10004;</span></div>\n <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>\n",
+        thumbnailWidth:200, //px
+        thumbnailHeight:40, //px
+        dictFileTooBig: "ファイルが大きすぎます。 ({{filesize}}MiB). 最大サイズ: {{maxFilesize}}MiB.",
+        dictInvalidFileType: "csvファイル以外です。",
+        dictMaxFilesExceeded: "一度にアップロード出来るのは1ファイルまでです。",
+        dictRemoveFile:'削除',
+        dictCancelUpload:'キャンセル',
+        uploadprogress: function(_file, _progress, _size){
+          _file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + _progress + "%";
+        },
+        success: function(_file, _return, _xml){
+			  //引数の _return には サーバ側で出力(echo or print)された値を格納
+        _file.previewElement.classList.add("dz-success");
+        console.log(_return);
+        },
+        error: function(_file, _error_msg){
+        var ref;
+          (ref = _file.previewElement) != null ? ref.parentNode.removeChild(_file.previewElement) : void 0;
+        },
+        removedfile: function(_file){
+          var fname = _file.name;
+          // サーバのファイルを削除
+          $.ajax({
+            url: "/csv_delete",
+            type: "post",
+            data: JSON.stringify(fname),
+            cache: false,
+            dataType: 'json',
+            contentType: 'application/json',
+            // 成功したらサムネイルを削除
+            complete: function() {
+              var _ref;
+                if (_file.previewElement) {
+                  if ((_ref = _file.previewElement) != null) {
+                    _ref.parentNode.removeChild(_file.previewElement);
+                  }
+                }
+            }
+          });
+        },  
+		    dragover: function(e){	//ドロップ時の処理
+			    $("#drop_area").css("background-color", "#f0f0f0");
+		    },
+		    dragleave: function(e){	//ドロップが外れた場合の処理
+			    $("#drop_area").css("background-color", "#ffffff");
+		    }
+	    });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="header">
+  <div style="margin:20px 40px 0 30px; float:right;">
+    <input type="submit" onClick="location.href='/'" value="ログアウト"/>
+  </div>
+    <p id="LoginID" style="margin:12px 10px 0 0;">ログインユーザ： {{ user_id }}</p>
+    <p id="LoginDate" style="margin:2px 10px 0 0;">ログイン日時： {{ login_date }}</p>
+  </div>
+
+  <div>
+      <p class="ItemHeader">登録情報編集</p>
+  </div>
+  <div id="RegisterInfo1">
+    {% if entries %}
+    <table class="RegisterTable">
+      <thead>
+        <tr>
+          <th style="width:320px; text-align:center;">企業名</th>
+          <th style="width:320px; text-align:center;">本社所在地</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for entry in entries %}
+        <tr>
+          <td>{{ entry[2] }}</td>
+          <td>{{ entry[3] }}</td>
+          <td><input type="checkbox" style="margin: 0 0 0 0;"></td>
+        </tr>
+      {% endfor %}
+
+<!--
+        <tr>
+          <td>株式会社テクムズ</td>
+          <td>愛知県豊橋市草間町</td>
+          <td><input type="checkbox" style="margin: 0 0 0 0;"></td>
+        </tr>
+        <tr>
+          <td class="even">Tkmes-IOT Corporation</td>
+          <td class="even">愛知県名古屋市中区</td>
+          <td><input type="checkbox" style="margin: 0 0 0 0;"></td>
+        </tr>
+        <tr>
+          <td>Tkmes-Fintech Corporation</td>
+          <td>東京都新宿区西新宿</td>
+          <td><input type="checkbox" style="margin: 0 0 0 0;"></td>
+        </tr>
+-->
+      </tbody>
+    </table>
+    {% endif %}    
+  </div>
+  <div style="clear: both;"></div>
+
+  {% if entries %}
+  <div style="margin:30px 0 0 760px; float:left;">
+   <input type="button" onClick="location.href='/registerEditComplete'" value="一覧から削除"></input>
+  </div>    
+  <div style="clear: both;"></div>
+  {% endif %}  
+    
+  <div>
+      <p class="ItemHeader">取引履歴(csv)アップロード</p>
+  </div>
+
+  <div id="RegisterInfo2">
+    <div id="drop_area" class="dropzone-custom"><br /><br /><br />ここにドラッグするか、クリックして<br/>ファイルを選択して下さい。</div>
+    <div id="preview_area" class="dropzone-custom"></div>
+
+
+    <div id="template_area">
+      <a href="../static/excel/取引履歴.xlsx">『 取引履歴テンプレート 』<br>Microsoft Excel 形式　1.6KB</a>
+    </div>
+    <div id="image_area">
+      <a href="../static/excel/取引履歴.xlsx"><img src ="../static/image/excel_template.png" /></a>
+    </div>
+
+  </div>
+  <div style="clear: both;"></div>
+
+  <div style="margin:40px 0 0 480px; float:left;">
+    <input type="button" onClick="location.href='/top'" value="TOPへ"/>
+  </div>    
+  <div style="clear: both;"></div>
+  
+   <div id="OtherInfo">
+    <div id="OtherInfo1" style="margin:10px 0 0 100px; float:left;">
+      <a href="/privacyPolicy">個人情報保護方針</a>
+      <div style="clear: both;"></div>
+      <a href="/userRegister">新規ユーザ登録</a>
+      <div style="clear: both;"></div>
+      <a href="/passChange">パスワード変更</a>
+      <div style="clear: both;"></div>
+      <a href="/help">ヘルプ・よくあるご質問</a>
+      <div style="clear: both;"></div>
+      <a href="http://www.tkmes.jp/">運営会社情報</a>
+    </div>
+
+    <div id="AdobeReader">
+      <a href="https://get.adobe.com/jp/reader/"><img src="../static/image/adobe_reader.gif" alt="Adobe Reader"></a>
+    </div>
+
+    <div id="UserEnvironment">
+      <p class="Heading">ご利用環境</p>
+      <p class="Item">・Microsoft Internet Explorer11.0、Microsoft Edge、</p>
+      <p class="Item">　Firefox、Chrome最新版での動作を確認しています。</p>
+      <p class="Item">・Javascript、Cookieは有効にしてください。</p>
+      <p class="Item">・Adobe Readerを利用するサービスがあります。</p>
+    </div>
+  </div>
+
+  <div id="footer">
+    <img src="../static/image/logo.png" alt="" width="50" height="50" border="0" style="margin:5px 0 0 20px; float:left">    
+    <p id="TkmesInfo" style="margin:20px 0 0 30px;">Tkmes Corporation&copy;2017　All Rights Reserved</p>
+  </div>
+</body>
+</html>

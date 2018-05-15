@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>url_regist</title>
+  
+  {% load static %}
+  {% block bootstrap3_extra_head %}
+  <link rel="stylesheet" type="text/css" href="/static/css/django.css">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/redmond/jquery-ui.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--
+  <script type="text/javascript" src="/static/js/footerFixed.js"></script>
+-->
+  {% endblock %}
+
+  <script type="text/javascript">
+    var out_file = ""
+    var post_data = {}
+    $(function(){
+        $("#button1").click(function(){
+              var maxpage = $("#maxpage").val();
+              var extension = $("#extension").val();
+              var keywords = $("#keywords").val();
+              var post_data = {"maxpage":maxpage, "extension":extension, "keywords":keywords }
+              $.ajax({
+                url: '/crawl/',
+                type: 'POST',
+                data: JSON.stringify(post_data),
+                dataType: 'json',
+                processData: false,
+                contentType: 'application/json',
+                timeout: 10000
+              }).done(function (res) {
+//                alert(JSON.stringify(post_data));
+                console.log('done', res);
+                out_file = res
+                $("#dialog1").dialog("open");
+              }).fail(function( jqXHR, textStatus, errorThrown ) {
+                console.log( 'ERROR', jqXHR, textStatus, errorThrown );
+              });
+      });
+
+      $("#dialog1").dialog({
+        autoOpen: false,
+        width: 400,
+        modal: true,
+        buttons: [
+          {
+            text: 'ダウンロード',
+            click: function(){
+              var url = '../static/output/' + out_file.res;
+              location.href = url;
+              $(this).dialog("close");
+            }
+          },
+          {
+            text: '閉じる',
+            click: function(){
+              $(this).dialog("close");
+            }
+          }
+        ]
+      });
+    });
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    function go(){
+      //Enterキー押下でSubmit
+      if(window.event.keyCode == 13){
+              alert ("enter pressed")
+              var post_data = $("#myselect").val();
+              $.ajax({
+                url: '/crawl/',
+                type: 'POST',
+                data: JSON.stringify(post_data),
+                dataType: 'json',
+                processData: false,
+                contentType: 'application/json',
+                timeout: 10000
+              }).done(function (res) {
+//                alert(JSON.stringify(post_data));
+                console.log('done', res);
+                out_file = res
+                $("#dialog1").dialog("open");
+              }).fail(function( jqXHR, textStatus, errorThrown ) {
+                console.log( 'ERROR', jqXHR, textStatus, errorThrown );
+              });
+      };
+      return false();
+    };
+  </script>
+</head>
+
+<body>
+
+  <div id="header">
+    <p id="LoginDate" style="margin:25px 0 0 10px;">Last-login： {{datetime}}</p>
+    <div style="float: right;">
+      <a href="/login/" style="margin:-17px 20px 0 0; color:#fff; float:right;">ログアウト</a>
+    </div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div>
+    <p class="ItemHeader">URL登録</p>
+  </div>
+
+  <div id="LoginInfo">
+    {% csrf_token %}
+    <form id="myForm" name="myForm" class="myForm" method="post" action="">
+      <div style="margin:-70px 5px 0 -150px;">
+　　      <p style="margin:0 -60px -10px 0;">URL</p>
+        <input type="text" id="keyword" onkeydown="go();" size="24" style="width:500px; margin:18px 0 0 0; font-size: 11pt;" value="" required>
+      </div>
+
+      <div>
+    　　  <p style="margin:-10px -60px -10px -150px;">ユーザ名</p>
+   　　   <input type="text" id="username" name="username" style="width:200px; margin:18px 0 0 -182px; font-size: 11pt;" value="" autocomplete="on">
+      </div>
+      <div style="clear: both;"></div>
+
+      <div>
+        <p style="margin:10px -60px -10px -150px;">パスワード</p>
+  　　    <input type="text" id="password" name="password" style="width:200px; margin:18px 0 0 -182px; font-size: 11pt;" value="" autocomplete="off">
+      </div>
+      <div style="clear: both;"></div>
+      
+      <div style="margin:40px 0 0 150px;">
+        <input type="button" id="button1" class="btn" value="登録"/>
+      </div>
+    </form>
+  </div>
+  <div style="clear: both;"></div>
+  
+  <div id="BackDiv">
+    <button id="BackButton" type="button" onClick="location.href='/top'" class="btn">⇚back</button>
+  </div>
+  <div style="clear: both;"></div>
+
+
+<!--ダイアログを配置
+  <div id="dialog1" title="complete">
+    <br />
+    <p>処理が完了しました。</p>
+    <p>ファイルに対する操作を選択してください。</p>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div id="footer">
+    <img src="../static/image/logo.png" alt="" width="50" height="50" border="0" style="margin:5px 0 0 20px; float:left">
+    <p id="TkmesInfo" style="margin:20px 0 0 30px;">Tkmes Corporation&copy;2018</p>
+  </div>
+-->
+</body>
+</html>
