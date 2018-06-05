@@ -16,6 +16,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="/static/js/dropzone.min.js"></script>
   <script type="text/javascript" src="/static/js/dropzone-amd-module.min.js"></script>
+  <script type="text/javascript" src="/static/js/raindrops.js"></script>
 <!--
   <script type="text/javascript" src="/static/js/footerFixed.js"></script>
 -->
@@ -83,6 +84,17 @@
 	    });
     });
   </script>
+  
+  <script type="text/javascript">
+      $(function(){
+    	$('#sample').raindrops(
+{color:'#79aec8',
+waveLength: 800,
+waveHeight: 30});
+    });
+  </script>
+  
+  
 </head>
 
 <body>
@@ -105,9 +117,12 @@
   
    <form id="dropForm" method="post" action="">
       {% csrf_token %}
-      <div id="drop_area" class="dropzone-custom"><p style= "margin: auto; top: 100px; width: 90%; opacity: 0.5; height: 50px; position:relative; font-size: 16pt;">ここにドラッグするか、クリックしてファイルを選択して下さい。</p></div>
+      <div id="drop_area" class="dropzone-custom"><p style= "margin: auto; top: 180px; width: 90%; opacity: 0.5; height: 60px; position:relative; font-size: 14pt;">ここにドラッグするか、クリックしてファイルを選択して下さい。</p></div>
       <div id="preview_area" class="dropzone-custom"></div>
-      <div id="out_area" class="dropzone-custom"></div> 
+      <div id="out_area" class="dropzone-custom"></div>
+      <div id="sample"></div> 
+     
+      
     </form>
     <!--
     {% csrf_token %}
@@ -153,8 +168,10 @@
   </div>
   <div style="clear: both;"></div>
   
+  
+  
   <div id="BackDiv">
-    <button id="BackButton" type="button" onClick="location.href='/'" class="btn">⇚back</button>
+    <button id="BackButton" type="button" onClick="location.href='/'" class="btn">back</button>
   </div>
   <div style="clear: both;"></div>
 
