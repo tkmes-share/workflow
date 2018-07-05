@@ -31,9 +31,9 @@
                 paramName : "file",
                 parallelUploads: 1,
                 addRemoveLinks: true,
-                acceptedFiles: '.csv',       // アップロード許可ファイルを定義
-                maxFiles: 1,                 // 1度にアップロード出来るファイルの数
-                maxFilesize:10,              // 1つのファイルの最大サイズ(1=1M)
+                acceptedFiles: '.xls, .xlsx',       // アップロード許可ファイルを定義
+                maxFiles: 1,                        // 1度にアップロード出来るファイルの数
+                maxFilesize:10,                     // 1つのファイルの最大サイズ(1=1M)
                 previewsContainer:'#preview_area',
                 previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n <div class=\"dz-details\">\n <div class=\"dz-filename\"><span data-dz-name></span></div>\n <div class=\"dz-size\" data-dz-size></div>\n <img data-dz-thumbnail />\n </div>\n <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n <div class=\"dz-success-mark\"><span>&#10004;</span></div>\n <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>\n",
                 thumbnailWidth:200, //px
@@ -45,7 +45,7 @@
                 dictCancelUpload:'キャンセル',
                 success: function(_file, _return, _xml){
   	     	      //引数の _return には サーバ側で出力(echo or print)された値を格納
-//                    _file.previewElement.classList.add("dz-success");
+                    _file.previewElement.classList.add("dz-success");
                     $('#dialog1').dialog({
                         modal: false,
                         resizable: true,
@@ -136,20 +136,14 @@
       {% csrf_token %}
       <div id="drop_area" class="dropzone-custom"><p style= "margin: auto; top: 180px; width: 90%; opacity: 0.5; height: 60px; position:relative; font-size: 14pt;">ここにドラッグするか、クリックしてファイルを選択して下さい。</p></div>
       <div id="preview_area" class="dropzone-custom"></div>
-      <div id="wave" style= "margin: 2px 0 0 -5px; width: 100.5%; border-radius: 4px;"></div> 
+      <div id="wave" style= "margin: 2px 0 0 -5px; width: 100.5%; border-radius: 4px;"></div>
     </form>
   </div>
   <div style="clear: both;"></div>
 
-  <div id="template_area">
-      <a><img src="../static/image/excel_template.png" width="30" height="30" alt="Excel" style="margin: 5px 5px 0 0;"></a>
-      <a href="../static/input/template/input_template.xlsx">『 入力データ用テンプレート 』<br>　　　　Microsoft Excel csv形式　1.6KB
-      </a>
-  </div>
-  <div style="clear: both;"></div>
 
   <div id="BackDiv">
-    <button id="BackButton" type="button" onClick="location.href='/'" class="btn btn_primary">back</button>
+    <button id="BackButton" type="button" onClick="location.href='/'" class="btn btn-primary">back</button>
   </div>
   <div style="clear: both;"></div>
 
